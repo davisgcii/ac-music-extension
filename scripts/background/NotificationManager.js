@@ -7,7 +7,7 @@ function NotificationManager(addEventListener, isEnabled) {
 		chrome.notifications.create('animal-crossing-music', {
 			type: 'basic',
 			title: 'Animal Crossing Music',
-			iconUrl: `../img/${icon}.png`,
+			iconUrl: getLocalUrl(`img/${icon}.png`),
 			silent: true,
 			message
 		});

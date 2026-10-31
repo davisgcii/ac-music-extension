@@ -198,12 +198,11 @@ function StateManager() {
 	});
 
 	// play/pause when user clicks the extension icon
-	chrome.browserAction.onClicked.addListener(toggleMusic);
+	chrome.action.onClicked.addListener(toggleMusic);
 
 	// play/pause when chrome closes and the option to play in background is disabled
 	chrome.tabs.onRemoved.addListener(checkTabs);
 	chrome.tabs.onCreated.addListener(checkTabs);
-	setInterval(checkTabs, 1000);
 
 	tabAudio.registerCallback(audible => {
 		notifyListeners("tabAudio", [audible, options.tabAudio, options.tabAudioReduceValue]);
@@ -216,10 +215,13 @@ function StateManager() {
 	});
 
 	function toggleMusic() {
-		chrome.storage.sync.set({ paused: !options.paused }, function () {
-			getSyncedOptions(() => {
-				if (options.paused) notifyListeners("pause");
-				else self.activate();
+		// Read the saved state first, in case a click arrives before the options have loaded.
+		getSyncedOptions(() => {
+			chrome.storage.sync.set({ paused: !options.paused }, function () {
+				getSyncedOptions(() => {
+					if (options.paused) notifyListeners("pause");
+					else self.activate();
+				});
 			});
 		});
 	}
