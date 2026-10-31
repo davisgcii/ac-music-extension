@@ -53,7 +53,7 @@ function BadgeManager(addEventListener, isEnabledStart) {
 
 	addEventListener("weatherChange", (hour, weather) => setIcon(weather));
 
-	chrome.browserAction.setBadgeBackgroundColor({ color: [57, 230, 0, 255] });
+	chrome.action.setBadgeBackgroundColor({ color: [57, 230, 0, 255] });
 
 	function updateBadgeText(reset = false) {
 		if (isTabAudible) return;
@@ -67,8 +67,8 @@ function BadgeManager(addEventListener, isEnabledStart) {
 	}
 
 	function setBadgeText(text, color = [57, 230, 0, 255]) {
-		chrome.browserAction.setBadgeText({ text });
-		chrome.browserAction.setBadgeBackgroundColor({ color });
+		chrome.action.setBadgeText({ text });
+		chrome.action.setBadgeBackgroundColor({ color });
 	}
 
 	function setIcon(icon) {
@@ -87,7 +87,10 @@ function BadgeManager(addEventListener, isEnabledStart) {
 				32: `img/icons/kk/32.png`,
 			};
 		}
-		
-		chrome.browserAction.setIcon({ path });
+
+		// The service worker sets the icon, and it can't load these short paths, so use full URLs.
+		for (let size in path) path[size] = getLocalUrl(path[size]);
+
+		chrome.action.setIcon({ path });
 	}
 }

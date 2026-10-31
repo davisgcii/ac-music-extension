@@ -5,7 +5,6 @@
 function TabAudioHandler() {
 
     let tabUpdatedHandler;
-    let checkTabsInterval;
     let callback;
 
     this.audible = false;
@@ -24,7 +23,6 @@ function TabAudioHandler() {
         tabUpdatedHandler = this.checkTabs;
         chrome.tabs.onUpdated.addListener(tabUpdatedHandler);
         chrome.tabs.onRemoved.addListener(tabUpdatedHandler); // A tab that is audible can be closed and will not trigger the updated event.
-        checkTabsInterval = setInterval(this.checkTabs, 100);
         this.checkTabs();
     }
 
@@ -33,7 +31,6 @@ function TabAudioHandler() {
             chrome.tabs.onUpdated.removeListener(tabUpdatedHandler);
             chrome.tabs.onRemoved.removeListener(tabUpdatedHandler);
         }
-        if (checkTabsInterval) clearInterval(checkTabsInterval);
         tabUpdatedHandler = null;
     }
 
