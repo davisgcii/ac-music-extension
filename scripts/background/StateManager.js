@@ -65,7 +65,8 @@ function StateManager() {
 	// Possible events include:
 	// volume, kkStart, hourMusic, gameChange, weatherChange, pause, tabAudio, musicFailed
 	function notifyListeners(event, args) {
-		if (!options.paused || event === "pause" || event === "volume") {
+		// browserClosed keeps the music off until a window opens, like paused but not saved.
+		if ((!options.paused && !browserClosed) || event === "pause" || event === "volume") {
 			var callbackArr = callbacks[event] || [];
 			for (var i = 0; i < callbackArr.length; i++) {
 				callbackArr[i].apply(window, args);
@@ -234,8 +235,8 @@ function StateManager() {
 					notifyListeners("pause");
 					browserClosed = true;
 				} else if (browserClosed) {
-					self.activate();
 					browserClosed = false;
+					self.activate();
 				}
 			});
 		}
