@@ -232,6 +232,11 @@ function AudioManager(addEventListener, isTownTune) {
 		}
 	}
 
+	// The pause from fadeOutAudio doesn't always reach onPause: playKKSong removes the handler,
+	// and setting a new src drops the pending pause event. Clear hourlyChange once music plays
+	// again, so the next real pause isn't ignored.
+	audio.addEventListener("play", () => hourlyChange = false);
+
 	function setVolume() {
 		let newVolume = setVolumeValue;
 		if (reducedVolume) newVolume = newVolume * (1 - reduceVolumeValue / 100);
@@ -272,7 +277,7 @@ function AudioManager(addEventListener, isTownTune) {
 					audio.pause();
 					tabAudioPaused = true;
 				} else {
-					if (audio.paused && (audio.readyState >= 3 || audio.readyState == 0)) {
+					if (audio.paused) {
 						if (!townTunePlaying) audio.play();
 						tabAudioPaused = false;
 						// Get the badge icon updated.
